@@ -90,6 +90,11 @@
         <input type="password" name="password" placeholder="Password" required>
         {% comment %} <input type="password" name="confirm_password" placeholder="Confirm Password" required> {% endcomment %}
         <button type="submit">Login</button>
+
+        <a href="{%url 'password_reset'%}" > Forgot your password ? </a>
+        <br><br>
+
+        <a href="{%url 'signup'%}" > Create an account </a>
     </form>
 </div>
 
