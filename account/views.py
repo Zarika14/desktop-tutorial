@@ -4,10 +4,15 @@ from django.contrib.auth import authenticate,login,logout,update_session_auth_ha
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
-
-
+from .models import Product, ProductCategory
 
 # Create your views here.
+@login_required(login_url='login')
+def HomePage(request):
+    products = Product.objects.all()
+    categories = ProductCategory.objects.all()
+    return render(request, 'home.html', {'products': products, 'categories': categories})
+
 def SignUpPage(request):
     if request.method =='POST':
         uname = request.POST.get('username')
@@ -28,7 +33,7 @@ def LoginPage(request):
     if request.method =='POST':
         username = request.POST.get('username')
         pass1 = request.POST.get('password')
-        print(username,pass1)
+        # print(username,pass1)
         user = authenticate(request,username=username,password=pass1)
         if user is not None:
             login(request,user)
@@ -39,13 +44,11 @@ def LoginPage(request):
     return render(request,'login.html')
 
 @login_required(login_url='login')
-def HomePage(request):
-    return render(request,'home.html')
-
 def LogOutPage(request):
     logout(request)
     return redirect('login')
 
+@login_required(login_url='login')
 def Change_Password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(user=request.user, data=request.POST)
