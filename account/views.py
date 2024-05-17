@@ -34,7 +34,7 @@ def LoginPage(request):
             login(request,user)
             return redirect('home')
         else:
-            return HttpResponse("Invalid Credentials")
+            messages.error(request, 'Invalid Credentials')
         
     return render(request,'login.html')
 
