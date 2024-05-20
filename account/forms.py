@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Product
+from .models import *
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -18,3 +18,17 @@ class ProductForm(forms.ModelForm):
             raise ValidationError('A product with the same name, category, description, and price already exists.')
 
         return cleaned_data
+
+
+class ProductFilterForm(forms.Form):
+    name = forms.CharField(required=False, label='Product Name')
+    category = forms.ModelChoiceField(
+        queryset=ProductCategory.objects.all(),
+        required=False,
+        label='Category'
+    )
+
+class CartItemForm(forms.ModelForm):
+    class Meta:
+        model = CartItem
+        fields = ['quantity']

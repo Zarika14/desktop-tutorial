@@ -12,6 +12,13 @@ urlpatterns=[
     path('my_products/', user_products, name='user_products'),
     path('edit_product/<int:product_id>', edit_product, name='edit_product'),
     path('delete_product/<int:product_id>/', delete_product, name='delete_product'),
+    path('add_to_cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
+    path('view_cart/', cart, name='view_cart'),
+    path('update_cart/<int:item_id>/', views.update_cart_item, name='update_cart'),
+    path('remove_from_cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
+    # Other URL patterns
+    
+    
    
     
     # Reset password urls

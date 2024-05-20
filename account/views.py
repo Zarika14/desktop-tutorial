@@ -4,8 +4,8 @@ from django.contrib.auth import authenticate,login,logout,update_session_auth_ha
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
-from .models import Product, ProductCategory
-from .forms import ProductForm
+from .models import Product, ProductCategory,Cart, CartItem
+from .forms import *
 
 # Create your views here.
 @login_required
@@ -14,6 +14,7 @@ def add_product(request):
         form = ProductForm(request.POST)
         if form.is_valid():
             product = form.save(commit=False)
+            product.created_by = request.user
             if Product.objects.filter(
                 name=product.name,
                 category=product.category,
@@ -29,10 +30,26 @@ def add_product(request):
         form = ProductForm()
     return render(request, 'add_product.html', {'form': form})
 
+
 @login_required
 def HomePage(request):
     products = Product.objects.all()
-    return render(request, 'home.html', {'products': products})
+    filter_form = ProductFilterForm(request.GET)
+
+    if filter_form.is_valid():
+        name = filter_form.cleaned_data.get('name')
+        category = filter_form.cleaned_data.get('category')
+
+        if name:
+            products = products.filter(name__icontains=name)
+        if category:
+            products = products.filter(category=category)
+
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    
+    return render(request, 'home.html', {'products': products, 'filter_form': filter_form, 'cart': cart})
+
+
 
 @login_required
 def user_products(request):
@@ -67,6 +84,43 @@ def delete_product(request, product_id):
     if request.user in product.users.all():
         product.delete()
     return redirect('user_products')
+
+@login_required
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    
+    # Check if the product already exists in the cart
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+    
+    # If the product already exists, increment its quantity
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    
+    return redirect('home')
+@login_required
+def cart(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    context = {
+        'cart': cart,
+    }
+    return render(request, 'cart.html', context)
+
+@login_required
+def update_cart_item(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    if request.method == 'POST':
+        quantity = request.POST.get('quantity')
+        cart_item.quantity = int(quantity)
+        cart_item.save()
+    return redirect('view_cart')
+
+@login_required
+def remove_from_cart(request, item_id):
+    cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+    cart_item.delete()
+    return redirect('view_cart')
 
 
 def SignUpPage(request):
