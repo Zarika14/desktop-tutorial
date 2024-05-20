@@ -70,6 +70,9 @@
         {% csrf_token %}
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
+        <div class="g-recaptcha" data-sitekey="6LfceOIpAAAAAFOK0GyrrWMslbtnuXhUkZcHNujW
+        "></div>
+
         <button type="submit">Login</button>
 
         <a href="{% url 'password_reset' %}">Forgot your password?</a>
@@ -77,6 +80,8 @@
         <a href="{% url 'signup' %}">Create an account</a>
     </form>
 </div>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 </body>
 </html>

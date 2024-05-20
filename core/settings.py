@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 
+    "captcha"
+    
+    
     
 ]
 # AUTHENTICATION_BACKENDS =[
@@ -141,3 +145,6 @@ EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
 
 # print(EMAIL_HOST)
 # print(EMAIL_HOST_USER)
+
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY')

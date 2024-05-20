@@ -89,16 +89,14 @@ def delete_product(request, product_id):
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     cart, created = Cart.objects.get_or_create(user=request.user)
-    
     # Check if the product already exists in the cart
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    
     # If the product already exists, increment its quantity
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-    
     return redirect('home')
+
 @login_required
 def cart(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
